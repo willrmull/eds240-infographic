@@ -1,0 +1,100 @@
+---
+title: "exploration"
+format: pdf
+---
+### Load Necessary Packages
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(here)
+library(lubridate)
+```
+
+### Load in Data 
+
+```{r}
+# Read in Kansas Data
+events_raw <- read.csv(here::here("data", "events-KS-1980-2024.csv"), 
+                       skip = 2, 
+                       header = TRUE) %>% 
+                       clean_names()
+
+# Format Date Columns
+events <- events_raw %>% mutate(
+                                begin_date = as.Date(as.character(begin_date), format = "%Y%m%d"), 
+                                end_date = as.Date(as.character(end_date), format = "%Y%m%d")
+                               )
+head(events)
+```
+
+### Bar Plot of Events By Type
+
+### Horizontal Column Plot of CPI Adjusted Cost by Disaster Type
+
+```{r}
+# Horizontal Barplot of Total CPI Adjusted Cost By Type
+events %>% group_by(disaster) %>%
+    summarize(cpi_adjusted_cost = sum(cpi_adjusted_cost)) %>% # Get Total Cost
+    ggplot(aes(y = reorder(disaster, cpi_adjusted_cost), 
+               x = cpi_adjusted_cost)) +
+    geom_col()
+```
+
+### Horizontal Column Plot of CPI Adjusted Cost Per Event By Disaster Type
+```{r}
+# Plot CPI/Event
+events %>% group_by(disaster) %>%
+    summarize(cpi_adjusted_cost = sum(cpi_adjusted_cost),
+              event_count = n()) %>%
+    mutate(cost_per = cpi_adjusted_cost / event_count) %>% # Divide cost by number of eevnts
+    ggplot(aes(y = reorder(disaster, cost_per), 
+               x = cost_per)) + # Show Duration
+    geom_col()
+```
+
+### Horizontal Column Plot of Deaths by Disaster Type
+```{r}
+# Horizontal Barplot of Total Deaths By Disaster
+events %>% group_by(disaster) %>%
+    summarize(deaths = sum(deaths)) %>% # Get Total Deaths
+    ggplot(aes(y = reorder(disaster, deaths), x = deaths)) +
+    geom_col()
+```
+
+### Scatterplot Showing Heatwave Duration and Deaths
+
+```{r}
+events %>%
+    filter(str_detect(name, "Heat")) %>% # Find Events Labeled With Heat
+    ggplot(aes(x = begin_date, xend = end_date, y = deaths)) + # Show Duration
+    geom_segment(lwd = 3)
+```
+
+### Duration of Heatwaves/Droughts by Year
+```{r}
+# Plot of Heatwave Duration
+events %>%
+    mutate(duration = end_date - begin_date, # Calculate duration
+           year = year(begin_date)) %>% # Add year columns
+    filter(str_detect(name, "Heat")) %>%
+    ggplot(aes(x = year, y = duration)) +
+    geom_point() + 
+    geom_line()
+```
+
+***
+
+### Questions
+
+1. What have you learned about your data? Have any potentially interesting patterns emerged? Point to specific visualizations that you created as you describe your findings.
+
+- From the data we can see that droughts are the most damaging events both in both fiscal and human costs, as indicated by th bar plots made above. While this is what I expected, I also noticed that what this data classifies as an "event" is different from the standard definition. As we can see in the plot "Duration of Heatwaves/Droughts by Year", some of these events are year long events. 
+
+2. In FPM #1, you outlined some questions that you wanted to answer using these data. Have you made any strides towards answering those questions? If yes, how so? If no, what next steps do you need to take (e.g. I need to create X plot type, I still need to track down Y data, I need to restructure existing data so that you can visualize it in Z ways, etc.)? Have any new questions emerged?
+
+-  In FPM #1 I mentioned that I wanted to see the economic and human cost of these events. I think that I have sort of done this part already, as this is shown the bar plot, but I can definityly improve the visualizations to be more provocative. I also mentioned wanting to show the frequency of the events over time, which I have not yet done. I attempted to do it with the segmented scatterplot above, but I think more data is needed if I want it to be effective. I need to track down temperature anomoly data so I can show specific temperature anomoly events.
+
+3. What challenges do you foresee encountering with your data? These can be data wrangling and / or visualization challenges.
+
+- The data I have right now is somewhat limited, with only 102 rows, which makes visualization somewhat difficult. After making these visualizations I think I will need to find addtional data whcih focuses on specific events. 
