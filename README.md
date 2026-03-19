@@ -5,4 +5,7 @@ Despite being known for its tornadoes, the extreme weather event that causes the
 
 ### References
 
-NOAA National Centers for Environmental Information (NCEI) U.S. Billion-Dollar Weather and Climate Disasters (2025). [https://www.ncei.noaa.gov/access/billions/](https://www.ncei.noaa.gov/access/billions/), DOI: 10.25921/stkw-7w73
+NOAA National Centers for Environmental information, Climate at a Glance: Statewide Time Series, published March 2026, retrieved on March 19, 2026 from https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/statewide/time-series
+
+U.S. Department of Agriculture. (2020-2025). Cause of Loss Historical Files. Risk Management Agency.
+https://catalog.data.gov/dataset/cause-of-loss-historical-files
